@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kindly.backend.mapper.ReservationMapper">
+
+    <resultMap id="reservationMap" type="com.kindly.backend.domain.Reservation">
+        <id property="reservationId" column="reservation_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="treatmentId" column="treatment_id"/>
+        <result property="reservationDatetime" column="reservation_datetime"/>
+        <result property="status" column="status"/>
+        <result property="delayStatus" column="delay_status"/>
+        <result property="delayMessage" column="delay_message"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="reservationMap">
+        SELECT
+            reservation_id,
+            user_id,
+            treatment_id,
+            reservation_datetime,
+            status,
+            delay_status,
+            delay_message,
+            created_at
+        FROM reservation
+        ORDER BY reservation_datetime ASC
+    </select>
+
+    <insert id="insertReservation" parameterType="com.kindly.backend.domain.Reservation">
+        INSERT INTO reservation (
+            reservation_id,
+            user_id,
+            treatment_id,
+            reservation_datetime,
+            status,
+            delay_status,
+            delay_message,
+            created_at
+        ) VALUES (
+            seq_reservation.NEXTVAL,
+            #{userId},
+            #{treatmentId},
+            #{reservationDatetime},
+            #{status},
+            #{delayStatus},
+            #{delayMessage, jdbcType=VARCHAR},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <delete id="deleteReservation" parameterType="int">
+        DELETE FROM reservation
+        WHERE reservation_id = #{reservationId}
+    </delete>
+
+</mapper>
