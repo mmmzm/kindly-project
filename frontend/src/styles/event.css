@@ -1,0 +1,30 @@
+.event-section {
+  background: #cf2f2f;
+  padding: 80px 24px;
+  color: white;
+}
+
+.event-header {
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.event-card {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  color: black;
+}
+
+.event-image {
+  height: 400px;
+  background: #ff4d4d;
+  padding: 30px;
+  color: white;
+}
+
+.event-info {
+  padding: 20px;
+}

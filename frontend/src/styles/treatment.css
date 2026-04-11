@@ -1,0 +1,17 @@
+.treatment-section {
+  padding: 80px 24px;
+}
+
+.treatment-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.card {
+  height: 150px;
+  background: #f3f3f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
