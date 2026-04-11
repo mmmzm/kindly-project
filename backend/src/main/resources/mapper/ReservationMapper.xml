@@ -7,7 +7,8 @@
 
     <resultMap id="reservationMap" type="com.kindly.backend.domain.Reservation">
         <id property="reservationId" column="reservation_id"/>
-        <result property="userId" column="user_id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="phone" column="phone"/>
         <result property="treatmentId" column="treatment_id"/>
         <result property="reservationDatetime" column="reservation_datetime"/>
         <result property="status" column="status"/>
@@ -19,7 +20,8 @@
     <select id="findAll" resultMap="reservationMap">
         SELECT
             reservation_id,
-            user_id,
+            customer_name,
+            phone,
             treatment_id,
             reservation_datetime,
             status,
@@ -33,7 +35,8 @@
     <insert id="insertReservation" parameterType="com.kindly.backend.domain.Reservation">
         INSERT INTO reservation (
             reservation_id,
-            user_id,
+            customer_name,
+            phone,
             treatment_id,
             reservation_datetime,
             status,
@@ -42,7 +45,8 @@
             created_at
         ) VALUES (
             seq_reservation.NEXTVAL,
-            #{userId},
+            #{customerName},
+            #{phone},
             #{treatmentId},
             #{reservationDatetime},
             #{status},
@@ -56,5 +60,37 @@
         DELETE FROM reservation
         WHERE reservation_id = #{reservationId}
     </delete>
+
+    <select id="findByNameAndPhone" resultMap="reservationMap">
+        SELECT
+            reservation_id,
+            customer_name,
+            phone,
+            treatment_id,
+            reservation_datetime,
+            status,
+            delay_status,
+            delay_message,
+            created_at
+        FROM reservation
+        WHERE customer_name = #{customerName}
+          AND phone = #{phone}
+        ORDER BY reservation_datetime DESC
+    </select>
+
+    <select id="countByReservationDatetime" resultType="int">
+        SELECT COUNT(*)
+        FROM reservation
+        WHERE reservation_datetime = #{reservationDatetime}
+          AND status = 'RESERVED'
+    </select>
+
+    <select id="findUnavailableTimesByDate" resultType="string">
+        SELECT TO_CHAR(reservation_datetime, 'HH24:MI')
+        FROM reservation
+        WHERE TO_CHAR(reservation_datetime, 'YYYY-MM-DD') = #{reservationDate}
+          AND status = 'RESERVED'
+        ORDER BY reservation_datetime
+    </select>
 
 </mapper>

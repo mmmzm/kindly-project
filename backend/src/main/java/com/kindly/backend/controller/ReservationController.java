@@ -23,7 +23,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public String insertReservation(@RequestBody Reservation reservation) {
+    public String createReservation(@RequestBody Reservation reservation) {
         reservationService.insertReservation(reservation);
         return "예약 등록 성공";
     }
@@ -32,5 +32,15 @@ public class ReservationController {
     public String deleteReservation(@PathVariable int reservationId) {
         reservationService.deleteReservation(reservationId);
         return "예약 삭제 성공";
+    }
+
+    @PostMapping("/search")
+    public List<Reservation> findByNameAndPhone(@RequestBody Reservation reservation) {
+        return reservationService.findByNameAndPhone(reservation);
+    }
+
+    @GetMapping("/unavailable")
+    public List<String> findUnavailableTimes(@RequestParam String date) {
+        return reservationService.findUnavailableTimesByDate(date);
     }
 }

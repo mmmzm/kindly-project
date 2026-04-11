@@ -1,52 +1,60 @@
 package com.kindly.backend.domain;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 
 public class Reservation {
 
-    private Long reservationId;
-    private Long userId;
-    private Long treatmentId;
+    private int reservationId;
+    private String customerName;
+    private String phone;
+    private int treatmentId;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private Date reservationDatetime;
+    private LocalDateTime reservationDatetime;
 
     private String status;
     private String delayStatus;
     private String delayMessage;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    public Long getReservationId() {
+    public int getReservationId() {
         return reservationId;
     }
 
-    public void setReservationId(Long reservationId) {
+    public void setReservationId(int reservationId) {
         this.reservationId = reservationId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
-    public Long getTreatmentId() {
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public int getTreatmentId() {
         return treatmentId;
     }
 
-    public void setTreatmentId(Long treatmentId) {
+    public void setTreatmentId(int treatmentId) {
         this.treatmentId = treatmentId;
     }
 
-    public Date getReservationDatetime() {
+    public LocalDateTime getReservationDatetime() {
         return reservationDatetime;
     }
 
-    public void setReservationDatetime(Date reservationDatetime) {
+    public void setReservationDatetime(LocalDateTime reservationDatetime) {
         this.reservationDatetime = reservationDatetime;
     }
 
@@ -74,11 +82,11 @@ public class Reservation {
         this.delayMessage = delayMessage;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }
