@@ -184,14 +184,14 @@ function Reservation() {
     try {
       setIsSubmitting(true);
 
-      await axios.post("http://localhost:8080/reservations", {
+      const res = await axios.post("http://localhost:8080/reservations", {
         customerName: form.customerName.trim(),
         phone: normalizedPhone,
         treatmentId: Number(form.treatmentId),
         reservationDatetime,
       });
 
-      alert("예약이 완료되었습니다.");
+      alert(res.data.message);
 
       setForm({
         treatmentId: "",
@@ -206,9 +206,7 @@ function Reservation() {
       console.error("예약 등록 실패:", error);
 
       const message =
-        error.response?.data?.message ||
-        error.response?.data ||
-        "예약 등록에 실패했습니다.";
+        error.response?.data?.message || "예약 등록에 실패했습니다.";
 
       alert(message);
     } finally {
@@ -271,9 +269,9 @@ function Reservation() {
     for (let day = 1; day <= lastDate; day += 1) {
       days.push(new Date(year, month, day));
     }
-    
+
     while (days.length < 42) {
-    days.push(null);
+      days.push(null);
     }
 
     return days;

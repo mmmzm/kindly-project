@@ -21,4 +21,7 @@ public interface ReservationMapper {
     int countByReservationDatetime(@Param("reservationDatetime") LocalDateTime reservationDatetime);
 
     List<String> findUnavailableTimesByDate(@Param("reservationDate") String reservationDate);
+
+    int countByPhoneAndDate(@Param("phone") String phone, @Param("reservationDate") String reservationDate);
+    
 }

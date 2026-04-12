@@ -93,4 +93,12 @@
         ORDER BY reservation_datetime
     </select>
 
+    <select id="countByPhoneAndDate" resultType="int">
+        SELECT COUNT(*)
+        FROM reservation
+        WHERE phone = #{phone}
+          AND TO_CHAR(reservation_datetime, 'YYYY-MM-DD') = #{reservationDate}
+          AND status = 'RESERVED'
+    </select>
+
 </mapper>

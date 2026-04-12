@@ -22,6 +22,7 @@ public class ReservationService {
 
     public void insertReservation(Reservation reservation) {
         validateReservation(reservation);
+        validateSameDayReservation(reservation.getPhone(), reservation.getReservationDatetime());
         validateDuplicateReservation(reservation.getReservationDatetime());
 
         if (reservation.getStatus() == null || reservation.getStatus().isBlank()) {
@@ -89,6 +90,16 @@ public class ReservationService {
 
         if (!reservationDatetime.isAfter(now)) {
             throw new IllegalArgumentException("현재 시간 이후로만 예약할 수 있습니다.");
+        }
+    }
+
+    private void validateSameDayReservation(String phone, LocalDateTime reservationDatetime) {
+        String reservationDate = reservationDatetime.toLocalDate().toString();
+
+        int count = reservationMapper.countByPhoneAndDate(phone, reservationDate);
+
+        if (count > 0) {
+            throw new IllegalArgumentException("이미 동일한 날짜에 예약이 존재합니다.");
         }
     }
 

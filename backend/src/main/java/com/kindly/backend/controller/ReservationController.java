@@ -2,9 +2,12 @@ package com.kindly.backend.controller;
 
 import com.kindly.backend.domain.Reservation;
 import com.kindly.backend.service.ReservationService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/reservations")
@@ -18,29 +21,53 @@ public class ReservationController {
     }
 
     @GetMapping
-    public List<Reservation> findAll() {
-        return reservationService.findAll();
+    public ResponseEntity<List<Reservation>> findAll() {
+        return ResponseEntity.ok(reservationService.findAll());
     }
 
     @PostMapping
-    public String createReservation(@RequestBody Reservation reservation) {
-        reservationService.insertReservation(reservation);
-        return "예약 등록 성공";
+    public ResponseEntity<?> createReservation(@RequestBody Reservation reservation) {
+        try {
+            reservationService.insertReservation(reservation);
+            return ResponseEntity.ok(Map.of("message", "예약 등록 성공"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "서버 오류가 발생했습니다."));
+        }
     }
 
     @DeleteMapping("/{reservationId}")
-    public String deleteReservation(@PathVariable int reservationId) {
-        reservationService.deleteReservation(reservationId);
-        return "예약 삭제 성공";
+    public ResponseEntity<?> deleteReservation(@PathVariable int reservationId) {
+        try {
+            reservationService.deleteReservation(reservationId);
+            return ResponseEntity.ok(Map.of("message", "예약 삭제 성공"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "예약 삭제 중 오류가 발생했습니다."));
+        }
     }
 
     @PostMapping("/search")
-    public List<Reservation> findByNameAndPhone(@RequestBody Reservation reservation) {
-        return reservationService.findByNameAndPhone(reservation);
+    public ResponseEntity<?> findByNameAndPhone(@RequestBody Reservation reservation) {
+        try {
+            return ResponseEntity.ok(reservationService.findByNameAndPhone(reservation));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "예약 조회 중 오류가 발생했습니다."));
+        }
     }
 
     @GetMapping("/unavailable")
-    public List<String> findUnavailableTimes(@RequestParam String date) {
-        return reservationService.findUnavailableTimesByDate(date);
+    public ResponseEntity<?> findUnavailableTimes(@RequestParam String date) {
+        try {
+            return ResponseEntity.ok(reservationService.findUnavailableTimesByDate(date));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "예약 불가 시간 조회 중 오류가 발생했습니다."));
+        }
     }
 }
