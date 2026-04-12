@@ -1,6 +1,7 @@
 package com.kindly.backend.controller;
 
 import com.kindly.backend.domain.Reservation;
+import com.kindly.backend.dto.DelayRequestDto;
 import com.kindly.backend.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,38 @@ public class ReservationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "서버 오류가 발생했습니다."));
+        }
+    }
+
+    @PutMapping("/{reservationId}")
+    public ResponseEntity<?> updateReservation(
+            @PathVariable int reservationId,
+            @RequestBody Reservation reservation
+    ) {
+        try {
+            reservationService.updateReservation(reservationId, reservation);
+            return ResponseEntity.ok(Map.of("message", "예약이 변경되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "예약 변경 중 서버 오류가 발생했습니다."));
+        }
+    }
+
+    @PostMapping("/{reservationId}/delay")
+    public ResponseEntity<?> sendDelayNotice(
+            @PathVariable int reservationId,
+            @RequestBody DelayRequestDto delayRequestDto
+    ) {
+        try {
+            reservationService.updateDelayInfo(reservationId, delayRequestDto);
+            return ResponseEntity.ok(Map.of("message", "지연 알림이 전달되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "지연 알림 전송 중 서버 오류가 발생했습니다."));
         }
     }
 

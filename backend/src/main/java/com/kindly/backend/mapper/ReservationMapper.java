@@ -12,7 +12,20 @@ public interface ReservationMapper {
 
     List<Reservation> findAll();
 
+    Reservation findById(@Param("reservationId") int reservationId);
+
     void insertReservation(Reservation reservation);
+
+    void updateReservationDatetime(
+            @Param("reservationId") int reservationId,
+            @Param("reservationDatetime") LocalDateTime reservationDatetime
+    );
+
+    void updateDelayInfo(
+            @Param("reservationId") int reservationId,
+            @Param("delayStatus") String delayStatus,
+            @Param("delayMessage") String delayMessage
+    );
 
     void deleteReservation(@Param("reservationId") int reservationId);
 
@@ -20,8 +33,21 @@ public interface ReservationMapper {
 
     int countByReservationDatetime(@Param("reservationDatetime") LocalDateTime reservationDatetime);
 
+    int countByReservationDatetimeExcludingId(
+            @Param("reservationDatetime") LocalDateTime reservationDatetime,
+            @Param("reservationId") int reservationId
+    );
+
     List<String> findUnavailableTimesByDate(@Param("reservationDate") String reservationDate);
 
-    int countByPhoneAndDate(@Param("phone") String phone, @Param("reservationDate") String reservationDate);
-    
+    int countByPhoneAndDate(
+            @Param("phone") String phone,
+            @Param("reservationDate") String reservationDate
+    );
+
+    int countByPhoneAndDateExcludingId(
+            @Param("phone") String phone,
+            @Param("reservationDate") String reservationDate,
+            @Param("reservationId") int reservationId
+    );
 }

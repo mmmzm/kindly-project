@@ -336,7 +336,7 @@ function Reservation() {
       <Header />
 
       <div className="reservation-wrap">
-        <h2 className="reservation-page-title"></h2>
+        <p className="reservation-page-title">RESERVATION</p>
 
         <form className="reservation-grid" onSubmit={handleSubmit}>
           <section className="reservation-panel">

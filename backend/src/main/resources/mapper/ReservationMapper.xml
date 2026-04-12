@@ -32,6 +32,21 @@
         ORDER BY reservation_datetime ASC
     </select>
 
+    <select id="findById" resultMap="reservationMap">
+        SELECT
+            reservation_id,
+            customer_name,
+            phone,
+            treatment_id,
+            reservation_datetime,
+            status,
+            delay_status,
+            delay_message,
+            created_at
+        FROM reservation
+        WHERE reservation_id = #{reservationId}
+    </select>
+
     <insert id="insertReservation" parameterType="com.kindly.backend.domain.Reservation">
         INSERT INTO reservation (
             reservation_id,
@@ -56,7 +71,22 @@
         )
     </insert>
 
-    <delete id="deleteReservation" parameterType="int">
+    <update id="updateReservationDatetime">
+        UPDATE reservation
+        SET reservation_datetime = #{reservationDatetime},
+            delay_status = 'N',
+            delay_message = NULL
+        WHERE reservation_id = #{reservationId}
+    </update>
+
+    <update id="updateDelayInfo">
+        UPDATE reservation
+        SET delay_status = #{delayStatus},
+            delay_message = #{delayMessage, jdbcType=VARCHAR}
+        WHERE reservation_id = #{reservationId}
+    </update>
+
+    <delete id="deleteReservation">
         DELETE FROM reservation
         WHERE reservation_id = #{reservationId}
     </delete>
@@ -85,6 +115,14 @@
           AND status = 'RESERVED'
     </select>
 
+    <select id="countByReservationDatetimeExcludingId" resultType="int">
+        SELECT COUNT(*)
+        FROM reservation
+        WHERE reservation_datetime = #{reservationDatetime}
+          AND reservation_id != #{reservationId}
+          AND status = 'RESERVED'
+    </select>
+
     <select id="findUnavailableTimesByDate" resultType="string">
         SELECT TO_CHAR(reservation_datetime, 'HH24:MI')
         FROM reservation
@@ -98,6 +136,15 @@
         FROM reservation
         WHERE phone = #{phone}
           AND TO_CHAR(reservation_datetime, 'YYYY-MM-DD') = #{reservationDate}
+          AND status = 'RESERVED'
+    </select>
+
+    <select id="countByPhoneAndDateExcludingId" resultType="int">
+        SELECT COUNT(*)
+        FROM reservation
+        WHERE phone = #{phone}
+          AND TO_CHAR(reservation_datetime, 'YYYY-MM-DD') = #{reservationDate}
+          AND reservation_id != #{reservationId}
           AND status = 'RESERVED'
     </select>
 
