@@ -1,0 +1,660 @@
+.admin-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  background: #f5f5f5;
+}
+
+.admin-sidebar {
+  background: #ffffff;
+  border-right: 1px solid #ececec;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.admin-sidebar-brand {
+  margin-bottom: 28px;
+}
+
+.admin-sidebar-kicker {
+  margin: 0 0 8px;
+  color: #b43333;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.admin-sidebar-brand h1 {
+  margin: 0;
+  color: #222;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.admin-sidebar-user {
+  background: #fff7f7;
+  border: 1px solid #f0d8d8;
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-sidebar-user strong {
+  color: #222;
+  font-size: 1rem;
+}
+
+.admin-sidebar-user span {
+  color: #8f3a3a;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.admin-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
+  color: #555;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.admin-nav-link:hover {
+  background: #fff4f4;
+  color: #b43333;
+}
+
+.admin-nav-link.active {
+  background: #b43333;
+  color: #fff;
+}
+
+.admin-logout-btn {
+  margin-top: auto;
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 14px;
+  background: #222;
+  color: #fff;
+  font-size: 0.94rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.admin-logout-btn:hover {
+  opacity: 0.92;
+}
+
+.admin-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-main-header {
+  padding: 28px 32px 0;
+}
+
+.admin-main-kicker {
+  margin: 0 0 8px;
+  color: #b43333;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.admin-main-header h2 {
+  margin: 0;
+  color: #222;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.admin-main-content {
+  padding: 24px 32px 32px;
+  box-sizing: border-box;
+}
+
+.admin-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  border: 1px solid #eeeeee;
+}
+
+.admin-placeholder {
+  color: #666;
+  line-height: 1.7;
+}
+
+.admin-denied-box {
+  background: #fff6f6;
+  border: 1px solid #f0d3d3;
+  color: #8f3a3a;
+  border-radius: 18px;
+  padding: 20px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* 예약 관리 페이지 */
+.admin-reservation-grid.refined {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.admin-right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.admin-section-head {
+  margin-bottom: 18px;
+}
+
+.admin-section-head h3 {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  color: #222;
+}
+
+.admin-section-head p {
+  margin: 0;
+  color: #666;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* 요약 카드 */
+.admin-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.admin-summary-card {
+  background: #fff;
+  border: 1px solid #eeeeee;
+  border-radius: 20px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+}
+
+.admin-summary-card p {
+  margin: 0 0 8px;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.admin-summary-card strong {
+  color: #222;
+  font-size: 1.6rem;
+}
+
+.admin-summary-card.delay {
+  background: #fff7f7;
+  border-color: #f0d4d4;
+}
+
+/* 캘린더 */
+.admin-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.admin-calendar-header strong {
+  font-size: 1.2rem;
+  color: #222;
+}
+
+.admin-calendar-nav-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  color: #222;
+  font-size: 1rem;
+  cursor: pointer;
+  border: 1px solid #d7d7d7;
+}
+
+.admin-calendar-nav-btn:hover {
+  border-color: #b43333;
+  color: #b43333;
+}
+
+.admin-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 0.88rem;
+  color: #666;
+}
+
+.admin-calendar-weekdays .sun {
+  color: #d85a5a;
+}
+
+.admin-calendar-weekdays .sat {
+  color: #666;
+}
+
+.admin-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.admin-calendar-day {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #333;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+  position: relative; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-calendar-day:hover:not(.empty):not(:disabled) {
+  background: #f7ecec;
+}
+
+.admin-calendar-day.selected {
+  background: #b43333;
+  color: #fff;
+  font-weight: 700;
+}
+
+.admin-calendar-day.empty {
+  visibility: hidden;
+  background: transparent !important;
+  border: none !important;
+  pointer-events: none;
+}
+
+/* 빈 상태 */
+.admin-empty-box,
+.admin-empty-box.large {
+  min-height: 110px;
+  border: 1px dashed #e3dcdc;
+  background: #fcfcfc;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 0.94rem;
+  text-align: center;
+  padding: 16px;
+  line-height: 1.6;
+}
+
+.admin-empty-box.large {
+  min-height: 220px;
+}
+
+/* 예약 목록 영역 */
+.admin-reservation-list-card {
+  height: 700px;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-reservation-scroll-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.admin-reservation-scroll-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-reservation-scroll-area::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 999px;
+}
+
+.admin-reservation-card-list.refined {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 예약 카드 */
+.admin-reservation-item.refined {
+  border: 1px solid #ececec;
+  background: #fff;
+  border-radius: 20px;
+  padding: 16px;
+  transition: 0.2s ease;
+}
+
+.admin-reservation-item.refined:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.admin-reservation-item.refined.delay {
+  border-color: #e6b6b6;
+  background: #fff8f8;
+}
+
+.admin-reservation-item.refined.noshow {
+  border-color: #d7d7d7;
+  background: #fafafa;
+}
+
+.admin-reservation-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.admin-reservation-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-reservation-title-group strong {
+  color: #222;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.admin-phone-top {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.admin-reservation-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.admin-time-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 62px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #f6f6f6;
+  color: #444;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.admin-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 76px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff4f4;
+  color: #b43333;
+  border: 1px solid #f0d3d3;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.admin-status-badge.noshow {
+  background: #f1f1f1;
+  color: #555;
+  border-color: #dbdbdb;
+}
+
+.admin-reservation-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.admin-reservation-meta-card {
+  border: 1px solid #f0f0f0;
+  background: #fcfcfc;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-reservation-meta-card span {
+  color: #777;
+  font-size: 0.84rem;
+}
+
+.admin-reservation-meta-card strong {
+  color: #222;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* 지연 알림 */
+.admin-delay-box.refined {
+  margin-top: 12px;
+  background: #fff1f1;
+  border: 1px solid #efcaca;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.admin-delay-box.refined strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #b43333;
+  font-size: 0.9rem;
+}
+
+.admin-delay-box.refined p {
+  margin: 0;
+  color: #8f3a3a;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* 액션 */
+.admin-reservation-actions.refined {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.admin-action-btn {
+  min-width: 110px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.admin-action-btn.noshow {
+  background: #222;
+  color: #fff;
+}
+
+.admin-action-btn.noshow:hover {
+  opacity: 0.92;
+}
+
+.admin-calendar-day {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #333;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.admin-calendar-day-number {
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.admin-calendar-dot {
+  position: absolute;
+  top: 1.5px;          /* 점 상단  */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #999;
+  pointer-events: none;
+}
+
+.admin-calendar-dot.delay {
+  background: #b43333;
+}
+
+.admin-calendar-day.selected .admin-calendar-dot {
+  background: #fff;
+}
+
+.admin-calendar-day.selected .admin-calendar-dot.delay {
+  background: #fff;
+}
+
+/* 반응형 */
+@media (max-width: 1100px) {
+  .admin-reservation-grid.refined {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-summary-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 960px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #ececec;
+  }
+
+  .admin-sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .admin-nav-link {
+    justify-content: center;
+  }
+
+  .admin-logout-btn {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-reservation-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-main-header {
+    padding: 24px 16px 0;
+  }
+
+  .admin-main-content {
+    padding: 20px 16px 24px;
+  }
+
+  .admin-card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .admin-main-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .admin-reservation-item-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-reservation-badges {
+    justify-content: flex-start;
+  }
+
+  .admin-reservation-actions.refined {
+    justify-content: flex-start;
+  }
+
+  .admin-reservation-list-card {
+    height: auto;
+  }
+
+  .admin-reservation-scroll-area {
+    max-height: 520px;
+  }
+}
