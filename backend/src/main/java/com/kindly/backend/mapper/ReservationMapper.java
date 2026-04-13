@@ -27,6 +27,11 @@ public interface ReservationMapper {
             @Param("delayMessage") String delayMessage
     );
 
+    void updateReservationStatus(
+            @Param("reservationId") int reservationId,
+            @Param("status") String status
+    );
+
     void deleteReservation(@Param("reservationId") int reservationId);
 
     List<Reservation> findByNameAndPhone(Reservation reservation);

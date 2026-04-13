@@ -71,6 +71,19 @@ public class ReservationController {
         }
     }
 
+    @PutMapping("/{reservationId}/noshow")
+    public ResponseEntity<?> updateReservationToNoShow(@PathVariable int reservationId) {
+        try {
+            reservationService.updateReservationToNoShow(reservationId);
+            return ResponseEntity.ok(Map.of("message", "노쇼 처리되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "노쇼 처리 중 서버 오류가 발생했습니다."));
+        }
+    }
+
     @DeleteMapping("/{reservationId}")
     public ResponseEntity<?> deleteReservation(@PathVariable int reservationId) {
         try {

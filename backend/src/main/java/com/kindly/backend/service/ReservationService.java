@@ -102,6 +102,24 @@ public class ReservationService {
         );
     }
 
+    public void updateReservationToNoShow(int reservationId) {
+        Reservation existingReservation = reservationMapper.findById(reservationId);
+
+        if (existingReservation == null) {
+            throw new IllegalArgumentException("존재하지 않는 예약입니다.");
+        }
+
+        if ("NOSHOW".equals(existingReservation.getStatus())) {
+            throw new IllegalArgumentException("이미 노쇼 처리된 예약입니다.");
+        }
+
+        if ("CANCELLED".equals(existingReservation.getStatus())) {
+            throw new IllegalArgumentException("취소된 예약은 노쇼 처리할 수 없습니다.");
+        }
+
+        reservationMapper.updateReservationStatus(reservationId, "NOSHOW");
+    }
+
     public void deleteReservation(int reservationId) {
         reservationMapper.deleteReservation(reservationId);
     }

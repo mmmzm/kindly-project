@@ -28,4 +28,71 @@
         WHERE username = #{username}
     </select>
 
+    <select id="findByUserId" resultMap="userMap">
+        SELECT
+            user_id,
+            username,
+            password,
+            name,
+            phone,
+            role,
+            created_at
+        FROM users
+        WHERE user_id = #{userId}
+    </select>
+
+	<select id="findAdminUsers" resultMap="userMap">
+	    SELECT
+	        user_id,
+	        username,
+	        password,
+	        name,
+	        phone,
+	        role,
+	        created_at
+	    FROM users
+	    WHERE role IN ('ADMIN', 'SUPER_ADMIN')
+	    ORDER BY
+	        CASE WHEN role = 'SUPER_ADMIN' THEN 0 ELSE 1 END,
+	        created_at DESC,
+	        user_id DESC
+	</select>
+
+    <select id="countByUsername" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <select id="countSuperAdmins" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        WHERE role = 'SUPER_ADMIN'
+    </select>
+
+    <insert id="insertAdminUser" parameterType="com.kindly.backend.domain.User">
+        INSERT INTO users (
+            user_id,
+            username,
+            password,
+            name,
+            phone,
+            role,
+            created_at
+        ) VALUES (
+            seq_user.NEXTVAL,
+            #{username},
+            #{password},
+            #{name},
+            #{phone},
+            #{role},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <delete id="deleteUser">
+        DELETE FROM users
+        WHERE user_id = #{userId}
+    </delete>
+
 </mapper>

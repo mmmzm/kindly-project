@@ -18,13 +18,16 @@ public class AdminAuthService {
     public AdminLoginResponseDto login(AdminLoginRequestDto requestDto) {
         validateLoginRequest(requestDto);
 
-        User user = userMapper.findByUsername(requestDto.getUsername().trim());
+        String username = requestDto.getUsername().trim();
+        String password = requestDto.getPassword().trim();
+
+        User user = userMapper.findByUsername(username);
 
         if (user == null) {
             throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.");
         }
 
-        if (!user.getPassword().equals(requestDto.getPassword())) {
+        if (!user.getPassword().equals(password)) {
             throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.");
         }
 

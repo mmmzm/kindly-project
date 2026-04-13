@@ -13,6 +13,7 @@ function AdminReservations() {
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [processingNoShowId, setProcessingNoShowId] = useState(null);
 
   const dayLabels = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -173,10 +174,42 @@ function AdminReservations() {
     );
   };
 
-  const handleNoShow = (reservationId, customerName) => {
-    alert(
-      `${customerName} 고객 예약을 노쇼 처리하는 기능은 다음 단계에서 연결합니다. (예약 ID: ${reservationId})`
+  const handleNoShow = async (reservationId, customerName) => {
+    const confirmed = window.confirm(
+      `${customerName} 고객 예약을 노쇼 처리하시겠습니까?`
     );
+
+    if (!confirmed) return;
+
+    try {
+      setProcessingNoShowId(reservationId);
+
+      const res = await axios.put(
+        `http://localhost:8080/reservations/${reservationId}/noshow`
+      );
+
+      alert(res.data?.message || "노쇼 처리되었습니다.");
+
+      setReservations((prev) =>
+        prev.map((item) =>
+          item.reservationId === reservationId
+            ? {
+                ...item,
+                status: "NOSHOW",
+              }
+            : item
+        )
+      );
+    } catch (error) {
+      console.error("노쇼 처리 실패:", error);
+
+      const message =
+        error.response?.data?.message || "노쇼 처리 중 오류가 발생했습니다.";
+
+      alert(message);
+    } finally {
+      setProcessingNoShowId(null);
+    }
   };
 
   return (
@@ -353,8 +386,15 @@ function AdminReservations() {
                           type="button"
                           className="admin-action-btn noshow"
                           onClick={() => handleNoShow(r.reservationId, r.customerName)}
+                          disabled={
+                            r.status === "NOSHOW" || processingNoShowId === r.reservationId
+                          }
                         >
-                          노쇼 체크
+                          {processingNoShowId === r.reservationId
+                            ? "처리 중..."
+                            : r.status === "NOSHOW"
+                            ? "노쇼 완료"
+                            : "노쇼 체크"}
                         </button>
                       </div>
                     </article>

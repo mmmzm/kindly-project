@@ -86,6 +86,12 @@
         WHERE reservation_id = #{reservationId}
     </update>
 
+    <update id="updateReservationStatus">
+        UPDATE reservation
+        SET status = #{status}
+        WHERE reservation_id = #{reservationId}
+    </update>
+
     <delete id="deleteReservation">
         DELETE FROM reservation
         WHERE reservation_id = #{reservationId}
