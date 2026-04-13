@@ -724,7 +724,7 @@ setReservations((prev) =>
                     onClick={() => openDelayModal(item)}
                     disabled={item.delayStatus === "Y"}
                     >
-                    {item.delayStatus === "Y" ? "지연 알림 전달됨" : "늦을 것 같아요"}
+                    {item.delayStatus === "Y" ? "지연 알림 전달됨" : "지연 알림 보내기"}
                     </button>
 
                       <button
@@ -921,7 +921,7 @@ setReservations((prev) =>
             <div className="change-modal-head">
               <div>
                 <p className="modal-kicker">DELAY NOTICE</p>
-                <h3>지연 알림 보내기</h3>
+                <h3></h3>
               </div>
               <button
                 type="button"

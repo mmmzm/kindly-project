@@ -272,6 +272,10 @@
   gap: 12px;
 }
 
+.reservation-action-row.three-buttons {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .action-btn {
   height: 46px;
   border-radius: 14px;
@@ -279,6 +283,27 @@
   font-weight: 700;
   cursor: pointer;
   transition: 0.2s;
+}
+
+.action-btn.tertiary {
+  border: 1px solid #e3d5d5;
+  background: #fff8f8;
+  color: #8f3a3a;
+}
+
+.action-btn.tertiary:hover {
+  border-color: #b43333;
+  color: #b43333;
+}
+
+.action-btn.tertiary.filled {
+  border: none;
+  background: #8f3a3a;
+  color: #fff;
+}
+
+.action-btn.tertiary.filled:hover {
+  opacity: 0.92;
 }
 
 .action-btn.secondary {
@@ -337,7 +362,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .modal-kicker {
@@ -547,6 +572,81 @@
   gap: 10px;
 }
 
+/* delay modal */
+.delay-modal {
+  max-width: 420px;
+}
+
+.delay-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.delay-option-btn {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 16px;
+  border: 1px solid #e6dede;
+  border-radius: 16px;
+  background: #fff;
+  color: #333;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.delay-option-btn:hover {
+  border-color: #b43333;
+  background: #fff8f8;
+  color: #b43333;
+}
+
+.delay-option-btn.selected {
+  border: 2px solid #b43333;
+  background: #fff3f3;
+  color: #b43333;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(180, 51, 51, 0.08);
+}
+
+.delay-textarea-block {
+  margin-bottom: 18px;
+}
+
+.delay-textarea-block textarea {
+  width: 100%;
+  min-height: 140px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: none;
+  box-sizing: border-box;
+  background: #fafafa;
+  transition: all 0.2s ease;
+}
+
+.delay-textarea-block textarea:focus {
+  outline: none;
+  border-color: #b43333;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(180, 51, 51, 0.08);
+}
+
+.delay-text-count {
+  margin: 8px 4px 0 0;
+  text-align: right;
+  color: #999;
+  font-size: 0.82rem;
+}
+
 @media (max-width: 1100px) {
   .reservation-check-grid.two-columns {
     grid-template-columns: 1fr;
@@ -594,100 +694,17 @@
   .calendar-header strong {
     font-size: 1.1rem;
   }
-  .reservation-action-row.three-buttons {
-  grid-template-columns: repeat(3, 1fr);
-}
 
-.action-btn.tertiary {
-  border: 1px solid #e3d5d5;
-  background: #fff8f8;
-  color: #8f3a3a;
-}
-
-.action-btn.tertiary:hover {
-  border-color: #b43333;
-  color: #b43333;
-}
-
-.action-btn.tertiary.filled {
-  border: none;
-  background: #8f3a3a;
-  color: #fff;
-}
-
-.action-btn.tertiary.filled:hover {
-  opacity: 0.92;
-}
-
-.delay-modal {
-  max-width: 420px;
-}
-
-.delay-option-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.delay-option-btn {
-  width: 100%;
-  min-height: 44px;
-  padding: 0 14px;
-  border: 1px solid #e3e3e3;
-  border-radius: 14px;
-  background: #fff;
-  color: #444;
-  font-size: 0.92rem;
-  text-align: left;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.delay-option-btn:hover {
-  border-color: #b43333;
-  color: #b43333;
-}
-
-.delay-option-btn.selected {
-  border: 2px solid #b43333;
-  background: #fff8f8;
-  color: #b43333;
-  font-weight: 700;
-}
-
-.delay-textarea-block {
-  margin-bottom: 14px;
-}
-
-.delay-textarea-block textarea {
-  width: 100%;
-  min-height: 96px;
-  border: 1px solid #d9d9d9;
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 0.92rem;
-  font-family: inherit;
-  resize: none;
-  box-sizing: border-box;
-  background: #fff;
-}
-
-.delay-textarea-block textarea:focus {
-  outline: none;
-  border-color: #b43333;
-}
-
-.delay-text-count {
-  margin: 8px 2px 0 0;
-  text-align: right;
-  color: #888;
-  font-size: 0.82rem;
-}
-
-@media (max-width: 640px) {
   .reservation-action-row.three-buttons {
     grid-template-columns: 1fr;
-    }
-}
+  }
+
+  .delay-option-btn {
+    min-height: 48px;
+    font-size: 0.9rem;
+  }
+
+  .delay-textarea-block textarea {
+    min-height: 120px;
+  }
 }
