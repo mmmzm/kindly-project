@@ -1,6 +1,7 @@
 package com.kindly.backend.controller;
 
 import com.kindly.backend.dto.AdminCreateRequestDto;
+import com.kindly.backend.dto.AdminUpdateRequestDto;
 import com.kindly.backend.service.AdminManagerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class AdminManagerController {
         try {
             return ResponseEntity.ok(adminManagerService.findAdminUsers());
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "관리자 목록 조회 중 오류가 발생했습니다."));
         }
@@ -37,8 +39,27 @@ public class AdminManagerController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "관리자 등록 중 오류가 발생했습니다."));
+        }
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<?> updateAdminUser(
+            @PathVariable Long userId,
+            @RequestParam Long loginUserId,
+            @RequestBody AdminUpdateRequestDto requestDto
+    ) {
+        try {
+            adminManagerService.updateAdminUser(userId, loginUserId, requestDto);
+            return ResponseEntity.ok(Map.of("message", "관리자 정보가 수정되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "관리자 수정 중 오류가 발생했습니다."));
         }
     }
 
@@ -53,6 +74,7 @@ public class AdminManagerController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "관리자 삭제 중 오류가 발생했습니다."));
         }

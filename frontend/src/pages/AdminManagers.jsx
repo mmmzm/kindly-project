@@ -9,7 +9,7 @@ function AdminManagers() {
   const [managers, setManagers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState("create"); // create | edit
+  const [modalMode, setModalMode] = useState("create");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingUserId, setDeletingUserId] = useState(null);
@@ -77,7 +77,16 @@ function AdminManagers() {
       return;
     }
 
-    alert("수정 기능은 다음 단계에서 연결합니다.");
+    setModalMode("edit");
+    setManagerForm({
+      userId: selectedManager.userId,
+      username: selectedManager.username,
+      password: "",
+      name: selectedManager.name,
+      phone: selectedManager.phone,
+      role: selectedManager.role,
+    });
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
@@ -95,13 +104,18 @@ function AdminManagers() {
   };
 
   const validateForm = () => {
-    if (!managerForm.username.trim()) {
+    if (modalMode === "create" && !managerForm.username.trim()) {
       alert("아이디를 입력해주세요.");
       return false;
     }
 
-    if (!managerForm.password.trim()) {
+    if (modalMode === "create" && !managerForm.password.trim()) {
       alert("비밀번호를 입력해주세요.");
+      return false;
+    }
+
+    if (!managerForm.name.trim()) {
+      alert("이름을 입력해주세요.");
       return false;
     }
 
@@ -133,28 +147,49 @@ function AdminManagers() {
     try {
       setIsSubmitting(true);
 
-      const payload = {
-        username: managerForm.username.trim(),
-        password: managerForm.password.trim(),
-        name: managerForm.name.trim(),
-        phone: managerForm.phone.replace(/-/g, "").trim(),
-        role: managerForm.role,
-      };
+      if (modalMode === "create") {
+        const payload = {
+          username: managerForm.username.trim(),
+          password: managerForm.password.trim(),
+          name: managerForm.name.trim(),
+          phone: managerForm.phone.replace(/-/g, "").trim(),
+          role: managerForm.role,
+        };
 
-      const res = await axios.post(
-        "http://localhost:8080/admin/managers",
-        payload
-      );
+        const res = await axios.post(
+          "http://localhost:8080/admin/managers",
+          payload
+        );
 
-      alert(res.data?.message || "관리자 계정이 등록되었습니다.");
+        alert(res.data?.message || "관리자 계정이 등록되었습니다.");
+      } else {
+        const payload = {
+          password: managerForm.password.trim(),
+          name: managerForm.name.trim(),
+          phone: managerForm.phone.replace(/-/g, "").trim(),
+          role: managerForm.role,
+        };
+
+        const res = await axios.put(
+          `http://localhost:8080/admin/managers/${managerForm.userId}`,
+          payload,
+          {
+            params: {
+              loginUserId: adminUser?.userId,
+            },
+          }
+        );
+
+        alert(res.data?.message || "관리자 정보가 수정되었습니다.");
+      }
 
       setIsModalOpen(false);
       setSelectedUserId(null);
       await fetchManagers();
     } catch (error) {
-      console.error("관리자 등록 실패:", error);
+      console.error("관리자 저장 실패:", error);
       const message =
-        error.response?.data?.message || "관리자 등록 중 오류가 발생했습니다.";
+        error.response?.data?.message || "관리자 저장 중 오류가 발생했습니다.";
       alert(message);
     } finally {
       setIsSubmitting(false);
@@ -326,8 +361,12 @@ function AdminManagers() {
             >
               <div className="admin-manager-modal-head">
                 <div>
-                  <p className="admin-sidebar-kicker">CREATE MANAGER</p>
-                  <h3>관리자 등록</h3>
+                  <p className="admin-sidebar-kicker">
+                    {modalMode === "create" ? "CREATE MANAGER" : "EDIT MANAGER"}
+                  </p>
+                  <h3>
+                    {modalMode === "create" ? "관리자 등록" : "관리자 수정"}
+                  </h3>
                 </div>
 
                 <button
@@ -350,19 +389,25 @@ function AdminManagers() {
                     value={managerForm.username}
                     onChange={handleChange}
                     placeholder="아이디를 입력해주세요"
-                    disabled={isSubmitting}
+                    disabled={modalMode === "edit" || isSubmitting}
                   />
                 </div>
 
                 <div className="admin-manager-field">
-                  <label htmlFor="manager-password">비밀번호</label>
+                  <label htmlFor="manager-password">
+                    비밀번호 {modalMode === "edit" ? "(비워두면 유지)" : ""}
+                  </label>
                   <input
                     id="manager-password"
                     type="password"
                     name="password"
                     value={managerForm.password}
                     onChange={handleChange}
-                    placeholder="비밀번호를 입력해주세요"
+                    placeholder={
+                      modalMode === "edit"
+                        ? "변경할 때만 입력해주세요"
+                        : "비밀번호를 입력해주세요"
+                    }
                     disabled={isSubmitting}
                   />
                 </div>
@@ -429,7 +474,13 @@ function AdminManagers() {
                     className="admin-manager-toolbar-btn primary"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "등록 중..." : "등록"}
+                    {isSubmitting
+                      ? modalMode === "create"
+                        ? "등록 중..."
+                        : "수정 중..."
+                      : modalMode === "create"
+                      ? "등록"
+                      : "수정 저장"}
                   </button>
                 </div>
               </form>

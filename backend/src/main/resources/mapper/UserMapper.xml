@@ -41,22 +41,22 @@
         WHERE user_id = #{userId}
     </select>
 
-	<select id="findAdminUsers" resultMap="userMap">
-	    SELECT
-	        user_id,
-	        username,
-	        password,
-	        name,
-	        phone,
-	        role,
-	        created_at
-	    FROM users
-	    WHERE role IN ('ADMIN', 'SUPER_ADMIN')
-	    ORDER BY
-	        CASE WHEN role = 'SUPER_ADMIN' THEN 0 ELSE 1 END,
-	        created_at DESC,
-	        user_id DESC
-	</select>
+    <select id="findAdminUsers" resultMap="userMap">
+        SELECT
+            user_id,
+            username,
+            password,
+            name,
+            phone,
+            role,
+            created_at
+        FROM users
+        WHERE role IN ('ADMIN', 'SUPER_ADMIN')
+        ORDER BY
+            CASE WHEN role = 'SUPER_ADMIN' THEN 0 ELSE 1 END,
+            created_at DESC,
+            user_id DESC
+    </select>
 
     <select id="countByUsername" resultType="int">
         SELECT COUNT(*)
@@ -80,7 +80,7 @@
             role,
             created_at
         ) VALUES (
-            seq_user.NEXTVAL,
+            SEQ_USER.NEXTVAL,
             #{username},
             #{password},
             #{name},
@@ -89,6 +89,16 @@
             CURRENT_TIMESTAMP
         )
     </insert>
+
+    <update id="updateAdminUser" parameterType="com.kindly.backend.domain.User">
+        UPDATE users
+        SET
+            password = #{password},
+            name = #{name},
+            phone = #{phone},
+            role = #{role}
+        WHERE user_id = #{userId}
+    </update>
 
     <delete id="deleteUser">
         DELETE FROM users

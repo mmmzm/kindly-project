@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kindly.backend.mapper.AdminCustomerMapper">
+
+    <resultMap id="customerSummaryMap" type="com.kindly.backend.dto.AdminCustomerSummaryDto">
+        <result property="customerKey" column="customer_key"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="totalReservations" column="total_reservations"/>
+        <result property="validVisits" column="valid_visits"/>
+        <result property="noShowCount" column="no_show_count"/>
+        <result property="lastReservationDate" column="last_reservation_date"/>
+    </resultMap>
+
+    <resultMap id="customerReservationMap" type="com.kindly.backend.dto.AdminCustomerReservationDto">
+        <id property="reservationId" column="reservation_id"/>
+        <result property="treatmentName" column="treatment_name"/>
+        <result property="status" column="status"/>
+        <result property="dateTime" column="date_time"/>
+        <result property="delayMessage" column="delay_message"/>
+    </resultMap>
+
+    <select id="findCustomerSummaries" resultMap="customerSummaryMap">
+        SELECT
+            customer_name || '-' || phone AS customer_key,
+            customer_name AS name,
+            phone,
+            COUNT(*) AS total_reservations,
+            SUM(
+                CASE
+                    WHEN reservation_datetime &lt; CURRENT_TIMESTAMP
+                     AND status NOT IN ('NOSHOW', 'CANCELLED')
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS valid_visits,
+            SUM(
+                CASE
+                    WHEN status = 'NOSHOW' THEN 1
+                    ELSE 0
+                END
+            ) AS no_show_count,
+            TO_CHAR(MAX(reservation_datetime), 'YYYY-MM-DD HH24:MI') AS last_reservation_date
+        FROM reservation
+        GROUP BY customer_name, phone
+        ORDER BY
+            CASE
+                WHEN SUM(
+                    CASE
+                        WHEN reservation_datetime &lt; CURRENT_TIMESTAMP
+                         AND status NOT IN ('NOSHOW', 'CANCELLED')
+                        THEN 1
+                        ELSE 0
+                    END
+                ) >= 2 THEN 0
+                ELSE 1
+            END,
+            MAX(reservation_datetime) DESC
+    </select>
+
+    <select id="findCustomerReservations" resultMap="customerReservationMap">
+        SELECT
+            r.reservation_id,
+            CASE r.treatment_id
+                WHEN 1 THEN '리프팅'
+                WHEN 2 THEN '토닝'
+                WHEN 3 THEN '보톡스'
+                WHEN 4 THEN '제모'
+                ELSE '시술 미확인'
+            END AS treatment_name,
+            r.status,
+            TO_CHAR(r.reservation_datetime, 'YYYY-MM-DD HH24:MI') AS date_time,
+            r.delay_message
+        FROM reservation r
+        WHERE r.customer_name = #{name}
+          AND r.phone = #{phone}
+        ORDER BY r.reservation_datetime DESC
+    </select>
+
+</mapper>

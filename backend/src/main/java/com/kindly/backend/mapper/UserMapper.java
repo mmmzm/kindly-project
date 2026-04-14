@@ -21,5 +21,7 @@ public interface UserMapper {
 
     void insertAdminUser(User user);
 
+    void updateAdminUser(User user);
+
     void deleteUser(@Param("userId") Long userId);
 }
