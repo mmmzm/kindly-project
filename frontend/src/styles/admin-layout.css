@@ -840,6 +840,11 @@
   min-width: 0;
 }
 
+.admin-customer-list-card.fixed-panel,
+.admin-customer-detail-card.fixed-panel {
+  min-height: 520px;
+}
+
 /* 검색 */
 .admin-customer-search-bar {
   display: flex;
@@ -893,17 +898,18 @@
   background: #fff;
 }
 
-.admin-customer-table-wrap.fixed {
-  min-height: 340px;
+.admin-customer-table-wrap.fixed.compact {
+  min-height: 338px;
 }
 
-.admin-customer-table {
+.admin-customer-table.compact {
   width: 100%;
   border-collapse: collapse;
-  min-width: 860px;
+  table-layout: fixed;
+  min-width: 640px;
 }
 
-.admin-customer-table thead th {
+.admin-customer-table.compact thead th {
   height: 48px;
   padding: 0 14px;
   background: #fafafa;
@@ -913,31 +919,37 @@
   font-weight: 700;
   text-align: left;
   white-space: nowrap;
+  padding-left: 22px;
+  padding-right: 22px;
+  text-align: left;
 }
 
-.admin-customer-table tbody td {
+.admin-customer-table.compact tbody td {
   height: 58px;
   padding: 0 14px;
   border-bottom: 1px solid #f1f1f1;
   color: #222;
   font-size: 0.92rem;
-  vertical-align: middle;
+  vertical-align: middle;  
+  padding-left: 22px;
+  padding-right: 22px;
+  text-align: left;
 }
 
-.admin-customer-table tbody tr:last-child td {
+.admin-customer-table.compact tbody tr:last-child td {
   border-bottom: none;
 }
 
-.admin-customer-table tbody tr {
+.admin-customer-table.compact tbody tr {
   cursor: pointer;
   transition: 0.2s ease;
 }
 
-.admin-customer-table tbody tr:hover {
+.admin-customer-table.compact tbody tr:hover {
   background: #fff8f8;
 }
 
-.admin-customer-table tbody tr.selected {
+.admin-customer-table.compact tbody tr.selected {
   background: #fff4f4;
 }
 
@@ -1005,22 +1017,23 @@
 }
 
 /* 상세 */
-.admin-customer-detail-split {
+.admin-customer-detail-split.refined {
   display: grid;
   grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
   gap: 18px;
   align-items: start;
 }
 
-.admin-customer-profile-card {
+.admin-customer-profile-card.minimal {
   border: 1px solid #ececec;
   background: #fff;
   border-radius: 20px;
   padding: 18px;
+  min-height: 100%;
   min-width: 0;
 }
 
-.admin-customer-profile-top {
+.admin-customer-profile-top.minimal {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -1028,19 +1041,13 @@
   margin-bottom: 16px;
 }
 
-.admin-customer-profile-top strong {
+.admin-customer-profile-top.minimal strong {
   display: block;
   color: #222;
   font-size: 1.05rem;
-  margin-bottom: 6px;
 }
 
-.admin-customer-profile-top span {
-  color: #666;
-  font-size: 0.92rem;
-}
-
-.admin-customer-profile-grid {
+.admin-customer-profile-grid.minimal {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
@@ -1069,6 +1076,10 @@
   word-break: break-word;
 }
 
+.admin-customer-profile-item.full {
+  grid-column: 1 / -1;
+}
+
 /* 최근 예약 이력 */
 .admin-customer-history-section.side {
   min-width: 0;
@@ -1090,20 +1101,21 @@
   line-height: 1.6;
 }
 
-.admin-customer-history-list.side {
+.admin-customer-history-list.side.fixed-two {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 420px;
+  max-height: 252px;
+  min-height: 252px;
   overflow-y: auto;
   padding-right: 4px;
 }
 
-.admin-customer-history-list.side::-webkit-scrollbar {
+.admin-customer-history-list.side.fixed-two::-webkit-scrollbar {
   width: 8px;
 }
 
-.admin-customer-history-list.side::-webkit-scrollbar-thumb {
+.admin-customer-history-list.side.fixed-two::-webkit-scrollbar-thumb {
   background: #d9d9d9;
   border-radius: 999px;
 }
@@ -1219,14 +1231,14 @@
 
 /* 반응형 */
 @media (max-width: 1100px) {
-  .admin-customer-detail-split {
+  .admin-customer-detail-split.refined {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 760px) {
   .admin-customer-summary-grid,
-  .admin-customer-profile-grid,
+  .admin-customer-profile-grid.minimal,
   .admin-customer-chart-placeholder-grid {
     grid-template-columns: 1fr;
   }
@@ -1239,21 +1251,27 @@
   .admin-customer-search-btn {
     width: 100%;
   }
+
+  .admin-customer-list-card.fixed-panel,
+  .admin-customer-detail-card.fixed-panel {
+    min-height: auto;
+  }
 }
 
 @media (max-width: 640px) {
-  .admin-customer-profile-top,
+  .admin-customer-profile-top.minimal,
   .admin-customer-history-top,
   .admin-customer-history-meta {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .admin-customer-history-list.side {
-    max-height: 360px;
+  .admin-customer-history-list.side.fixed-two {
+    max-height: 252px;
+    min-height: 252px;
   }
 
-  .admin-customer-table-wrap.fixed {
+  .admin-customer-table-wrap.fixed.compact {
     min-height: auto;
   }
 }

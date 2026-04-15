@@ -12,26 +12,27 @@ function AdminCustomers() {
   const [selectedCustomerKey, setSelectedCustomerKey] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
+  const [loadingDetail, setLoadingDetail] = useState(false);
 
-  /* =======================
-     고객 목록 API
-  ======================= */
   const fetchCustomers = async () => {
     try {
+      setLoadingCustomers(true);
       const res = await axios.get("http://localhost:8080/admin/customers");
-      setCustomers(res.data);
+      setCustomers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("고객 목록 조회 실패:", err);
+      alert(
+        err.response?.data?.message || "고객 목록 조회 중 오류가 발생했습니다."
+      );
+    } finally {
+      setLoadingCustomers(false);
     }
   };
 
-  /* =======================
-     고객 상세 API
-  ======================= */
   const fetchCustomerDetail = async (name, phone) => {
     try {
-      setLoading(true);
+      setLoadingDetail(true);
 
       const res = await axios.get(
         "http://localhost:8080/admin/customers/detail",
@@ -43,8 +44,11 @@ function AdminCustomers() {
       setSelectedCustomer(res.data);
     } catch (err) {
       console.error("고객 상세 조회 실패:", err);
+      alert(
+        err.response?.data?.message || "고객 상세 조회 중 오류가 발생했습니다."
+      );
     } finally {
-      setLoading(false);
+      setLoadingDetail(false);
     }
   };
 
@@ -52,58 +56,64 @@ function AdminCustomers() {
     fetchCustomers();
   }, []);
 
-  /* =======================
-     검색 필터
-  ======================= */
   const filteredCustomers = useMemo(() => {
     const keyword = searchKeyword.trim().replace(/-/g, "");
 
     if (!keyword) return customers;
 
-    return customers.filter((c) => {
-      const phone = String(c.phone || "").replace(/-/g, "");
-      return c.name.includes(keyword) || phone.includes(keyword);
+    return customers.filter((customer) => {
+      const normalizedPhone = String(customer.phone || "").replace(/-/g, "");
+      return (
+        String(customer.name || "").includes(keyword) ||
+        normalizedPhone.includes(keyword)
+      );
     });
   }, [customers, searchKeyword]);
 
-  /* =======================
-     페이지네이션
-  ======================= */
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredCustomers.length / PAGE_SIZE)
-  );
+  const totalPages = Math.max(1, Math.ceil(filteredCustomers.length / PAGE_SIZE));
 
   const pagedCustomers = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
     return filteredCustomers.slice(start, start + PAGE_SIZE);
   }, [filteredCustomers, currentPage]);
 
-  /* =======================
-     선택 처리
-  ======================= */
   useEffect(() => {
-    if (pagedCustomers.length === 0) return;
-
-    if (!selectedCustomerKey) {
-      const first = pagedCustomers[0];
-      setSelectedCustomerKey(first.customerKey);
-      fetchCustomerDetail(first.name, first.phone);
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
     }
-  }, [pagedCustomers]);
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    if (pagedCustomers.length === 0) {
+      setSelectedCustomerKey(null);
+      setSelectedCustomer(null);
+      return;
+    }
+
+    const selectedExists = filteredCustomers.some(
+      (customer) => customer.customerKey === selectedCustomerKey
+    );
+
+    if (!selectedExists) {
+      const firstCustomer = pagedCustomers[0];
+      setSelectedCustomerKey(firstCustomer.customerKey);
+      fetchCustomerDetail(firstCustomer.name, firstCustomer.phone);
+    }
+  }, [filteredCustomers, pagedCustomers, selectedCustomerKey]);
 
   const handleSelectCustomer = (customer) => {
     setSelectedCustomerKey(customer.customerKey);
     fetchCustomerDetail(customer.name, customer.phone);
   };
 
-  /* =======================
-     UI 함수
-  ======================= */
   const formatPhone = (phone) => {
-    const p = String(phone || "");
-    if (p.length !== 11) return p;
-    return `${p.slice(0, 3)}-${p.slice(3, 7)}-${p.slice(7)}`;
+    const only = String(phone || "").replace(/-/g, "").trim();
+    if (only.length !== 11) return phone || "-";
+    return `${only.slice(0, 3)}-${only.slice(3, 7)}-${only.slice(7)}`;
+  };
+
+  const getRevisitLabel = (revisit) => {
+    return revisit ? "재방문" : "첫 방문";
   };
 
   const getStatusLabel = (status) => {
@@ -114,28 +124,26 @@ function AdminCustomers() {
         return "노쇼";
       case "CANCELLED":
         return "취소";
+      case "DONE":
+        return "방문완료";
       default:
-        return status;
+        return status || "-";
     }
   };
 
-  const getRevisitLabel = (revisit) =>
-    revisit ? "재방문" : "첫 방문";
-
-  const getNoShowRate = (c) => {
-    if (!c?.totalReservations) return "0%";
+  const getNoShowRate = (customer) => {
+    if (!customer?.totalReservations) return "0%";
     return `${Math.round(
-      (c.noShowCount / c.totalReservations) * 100
+      (customer.noShowCount / customer.totalReservations) * 100
     )}%`;
   };
 
-  /* =======================
-     렌더링
-  ======================= */
+  const revisitCustomerCount = customers.filter((c) => c.revisit).length;
+  const noShowCustomerCount = customers.filter((c) => c.noShowCount > 0).length;
+
   return (
     <AdminLayout title="고객 관리">
       <div className="admin-customer-page">
-        {/* 요약 */}
         <div className="admin-customer-summary-grid">
           <div className="admin-summary-card">
             <p>전체 고객 수</p>
@@ -143,102 +151,102 @@ function AdminCustomers() {
           </div>
           <div className="admin-summary-card">
             <p>재방문 고객</p>
-            <strong>
-              {customers.filter((c) => c.revisit).length}
-            </strong>
+            <strong>{revisitCustomerCount}</strong>
           </div>
           <div className="admin-summary-card delay">
             <p>노쇼 이력 고객</p>
-            <strong>
-              {customers.filter((c) => c.noShowCount > 0).length}
-            </strong>
+            <strong>{noShowCustomerCount}</strong>
           </div>
         </div>
 
-        {/* 고객 목록 */}
-        <section className="admin-card admin-customer-list-card">
+        <section className="admin-card admin-customer-list-card fixed-panel">
           <div className="admin-section-head">
             <h3>고객 목록</h3>
+            <p>이름 또는 전화번호로 고객을 조회할 수 있습니다.</p>
           </div>
 
           <form
             className="admin-customer-search-bar"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={(e) => {
+              e.preventDefault();
+              setCurrentPage(1);
+            }}
           >
             <input
+              type="text"
               className="admin-customer-search-input"
+              placeholder="이름 또는 전화번호를 입력해주세요"
               value={searchKeyword}
               onChange={(e) => {
                 setSearchKeyword(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="이름 / 전화번호 검색"
             />
+            <button type="submit" className="admin-customer-search-btn">
+              조회
+            </button>
           </form>
 
-          <div className="admin-customer-table-wrap fixed">
-            <table className="admin-customer-table">
+          <div className="admin-customer-table-wrap fixed compact">
+            <table className="admin-customer-table compact">
               <thead>
                 <tr>
                   <th>이름</th>
                   <th>연락처</th>
-                  <th>총 예약</th>
-                  <th>유효 방문</th>
-                  <th>노쇼</th>
-                  <th>재방문</th>
-                  <th>최근 예약</th>
+                  <th>방문 구분</th>
                 </tr>
               </thead>
-
               <tbody>
-                {pagedCustomers.length === 0 ? (
+                {loadingCustomers ? (
                   <tr>
-                    <td colSpan="7" className="admin-manager-empty-row">
-                      데이터 없음
+                    <td colSpan="3" className="admin-manager-empty-row">
+                      고객 목록을 불러오는 중입니다.
+                    </td>
+                  </tr>
+                ) : pagedCustomers.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="admin-manager-empty-row">
+                      조회된 고객이 없습니다.
                     </td>
                   </tr>
                 ) : (
-                  pagedCustomers.map((c) => (
-                    <tr
-                      key={c.customerKey}
-                      className={
-                        selectedCustomerKey === c.customerKey
-                          ? "selected"
-                          : ""
-                      }
-                      onClick={() => handleSelectCustomer(c)}
-                    >
-                      <td>{c.name}</td>
-                      <td>{formatPhone(c.phone)}</td>
-                      <td>{c.totalReservations}</td>
-                      <td>{c.validVisits}</td>
-                      <td>{c.noShowCount}</td>
-                      <td>
-                        <span
-                          className={`admin-customer-visit-badge ${
-                            c.revisit ? "revisit" : ""
-                          }`}
-                        >
-                          {getRevisitLabel(c.revisit)}
-                        </span>
-                      </td>
-                      <td>{c.lastReservationDate}</td>
-                    </tr>
-                  ))
+                  pagedCustomers.map((customer) => {
+                    const isSelected =
+                      selectedCustomerKey === customer.customerKey;
+
+                    return (
+                      <tr
+                        key={customer.customerKey}
+                        className={isSelected ? "selected" : ""}
+                        onClick={() => handleSelectCustomer(customer)}
+                      >
+                        <td>{customer.name}</td>
+                        <td>{formatPhone(customer.phone)}</td>
+                        <td>
+                          <span
+                            className={`admin-customer-visit-badge ${
+                              customer.revisit ? "revisit" : ""
+                            }`}
+                          >
+                            {getRevisitLabel(customer.revisit)}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
           </div>
 
-          {/* 페이지네이션 */}
           <div className="admin-customer-pagination">
             <button
+              type="button"
               className="admin-customer-page-btn"
-              onClick={() =>
-                setCurrentPage((p) => Math.max(1, p - 1))
-              }
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
             >
-              {"<"}
+              &lt;
             </button>
 
             <span className="admin-customer-page-info">
@@ -246,55 +254,131 @@ function AdminCustomers() {
             </span>
 
             <button
+              type="button"
               className="admin-customer-page-btn"
               onClick={() =>
-                setCurrentPage((p) =>
-                  Math.min(totalPages, p + 1)
-                )
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
               }
+              disabled={currentPage === totalPages}
             >
-              {">"}
+              &gt;
             </button>
           </div>
         </section>
 
-        {/* 고객 상세 */}
-        <section className="admin-card admin-customer-detail-card">
-          {loading ? (
-            <div className="admin-empty-box">불러오는 중...</div>
-          ) : selectedCustomer ? (
-            <div className="admin-customer-detail-split">
-              <div className="admin-customer-profile-card">
-                <strong>{selectedCustomer.name}</strong>
-                <p>{formatPhone(selectedCustomer.phone)}</p>
+        <section className="admin-card admin-customer-detail-card fixed-panel">
+          <div className="admin-section-head">
+            <h3>고객 상세</h3>
+            <p>선택한 고객의 요약 정보와 최근 예약 목록을 확인할 수 있습니다.</p>
+          </div>
 
-                <div className="admin-customer-profile-grid">
-                  <div>총 예약 {selectedCustomer.totalReservations}</div>
-                  <div>유효 방문 {selectedCustomer.validVisits}</div>
-                  <div>노쇼 {selectedCustomer.noShowCount}</div>
-                  <div>노쇼율 {getNoShowRate(selectedCustomer)}</div>
+          {loadingDetail ? (
+            <div className="admin-empty-box large">
+              고객 상세를 불러오는 중입니다.
+            </div>
+          ) : selectedCustomer ? (
+            <div className="admin-customer-detail-split refined">
+              <div className="admin-customer-profile-card minimal">
+                <div className="admin-customer-profile-top minimal">
+                  <div>
+                    <strong>{selectedCustomer.name}</strong>
+                  </div>
+
+                  <span
+                    className={`admin-customer-visit-badge ${
+                      selectedCustomer.revisit ? "revisit" : ""
+                    }`}
+                  >
+                    {getRevisitLabel(selectedCustomer.revisit)}
+                  </span>
+                </div>
+
+                <div className="admin-customer-profile-grid minimal">
+                  <div className="admin-customer-profile-item">
+                    <span>총 예약</span>
+                    <strong>{selectedCustomer.totalReservations}</strong>
+                  </div>
+                  <div className="admin-customer-profile-item">
+                    <span>노쇼율</span>
+                    <strong>{getNoShowRate(selectedCustomer)}</strong>
+                  </div>
+                  <div className="admin-customer-profile-item full">
+                    <span>인기 시술</span>
+                    <strong>{selectedCustomer.favoriteTreatment || "-"}</strong>
+                  </div>
                 </div>
               </div>
 
               <div className="admin-customer-history-section side">
-                <div className="admin-customer-history-list side">
-                  {selectedCustomer.reservations?.map((r) => (
-                    <div
-                      key={r.reservationId}
-                      className="admin-customer-history-item"
-                    >
-                      <strong>{r.treatmentName}</strong>
-                      <span>{getStatusLabel(r.status)}</span>
-                      <p>{r.dateTime}</p>
-                      {r.delayMessage && <p>{r.delayMessage}</p>}
+                <div className="admin-customer-subhead">
+                  <h4>최근 예약 목록</h4>
+                  <p>최신 예약 2개 높이 기준으로 보이고, 넘치면 스크롤됩니다.</p>
+                </div>
+
+                <div className="admin-customer-history-list side fixed-two">
+                  {selectedCustomer.reservations &&
+                  selectedCustomer.reservations.length > 0 ? (
+                    selectedCustomer.reservations.map((reservation) => (
+                      <article
+                        className={`admin-customer-history-item ${
+                          reservation.status === "NOSHOW" ? "noshow" : ""
+                        }`}
+                        key={reservation.reservationId}
+                      >
+                        <div className="admin-customer-history-top">
+                          <strong>{reservation.treatmentName || "-"}</strong>
+                          <span
+                            className={`admin-customer-history-status ${
+                              reservation.status === "NOSHOW" ? "noshow" : ""
+                            }`}
+                          >
+                            {getStatusLabel(reservation.status)}
+                          </span>
+                        </div>
+
+                        <div className="admin-customer-history-meta">
+                          <span>예약 일시</span>
+                          <strong>{reservation.dateTime || "-"}</strong>
+                        </div>
+
+                        {reservation.delayMessage && (
+                          <div className="admin-customer-delay-box">
+                            <strong>지연 알림</strong>
+                            <p>{reservation.delayMessage}</p>
+                          </div>
+                        )}
+                      </article>
+                    ))
+                  ) : (
+                    <div className="admin-empty-box">
+                      최근 예약 이력이 없습니다.
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="admin-empty-box">선택된 고객 없음</div>
+            <div className="admin-empty-box large">
+              고객을 선택하면 상세 정보가 표시됩니다.
+            </div>
           )}
+        </section>
+
+        <section className="admin-card admin-customer-chart-placeholder-card">
+          <div className="admin-section-head">
+            <h3>분석 차트 영역</h3>
+            <p>
+              다음 단계에서 파이썬으로 노쇼율, 시간대 분포, 재방문율, 인기 시술
+              차트를 연결할 예정입니다.
+            </p>
+          </div>
+
+          <div className="admin-customer-chart-placeholder-grid">
+            <div className="admin-customer-chart-box">노쇼율 차트</div>
+            <div className="admin-customer-chart-box">시간대별 예약 분포</div>
+            <div className="admin-customer-chart-box">재방문율 차트</div>
+            <div className="admin-customer-chart-box">인기 시술 차트</div>
+          </div>
         </section>
       </div>
     </AdminLayout>
