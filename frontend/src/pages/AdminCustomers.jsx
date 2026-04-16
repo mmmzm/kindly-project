@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import AdminLayout from "../components/AdminLayout";
+import NoShowTrendChart from "../components/NoShowTrendChart";
+import TimeDistributionChart from "../components/TimeDistributionChart";
+import RevisitRateChart from "../components/RevisitRateChart";
+import TopTreatmentsChart from "../components/TopTreatmentsChart";
 
 const PAGE_SIZE = 5;
 
@@ -368,15 +372,16 @@ function AdminCustomers() {
           <div className="admin-section-head">
             <h3>분석 차트 영역</h3>
             <p>
-              
+              노쇼율, 시간대별 분포,
+              재방문율, 인기 시술 TOP 데이터를 확인할 수 있습니다.
             </p>
           </div>
 
           <div className="admin-customer-chart-placeholder-grid">
-            <div className="admin-customer-chart-box">노쇼율 차트</div>
-            <div className="admin-customer-chart-box">시간대별 예약 분포</div>
-            <div className="admin-customer-chart-box">재방문율 차트</div>
-            <div className="admin-customer-chart-box">인기 시술 차트</div>
+            <NoShowTrendChart />
+            <TimeDistributionChart />
+            <RevisitRateChart />
+            <TopTreatmentsChart />
           </div>
         </section>
       </div>
