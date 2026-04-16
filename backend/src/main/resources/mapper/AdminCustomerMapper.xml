@@ -13,6 +13,7 @@
         <result property="validVisits" column="valid_visits"/>
         <result property="noShowCount" column="no_show_count"/>
         <result property="lastReservationDate" column="last_reservation_date"/>
+        <result property="favoriteTreatment" column="favorite_treatment"/>
     </resultMap>
 
     <resultMap id="customerReservationMap" type="com.kindly.backend.dto.AdminCustomerReservationDto">
@@ -43,8 +44,36 @@
                     ELSE 0
                 END
             ) AS no_show_count,
-            TO_CHAR(MAX(reservation_datetime), 'YYYY-MM-DD HH24:MI') AS last_reservation_date
-        FROM reservation
+            TO_CHAR(MAX(reservation_datetime), 'YYYY-MM-DD HH24:MI') AS last_reservation_date,
+            (
+                SELECT treatment_name
+                FROM (
+                    SELECT
+                        CASE r2.treatment_id
+                            WHEN 1 THEN '리프팅'
+                            WHEN 2 THEN '토닝'
+                            WHEN 3 THEN '보톡스'
+                            WHEN 4 THEN '제모'
+                            ELSE '시술 미확인'
+                        END AS treatment_name,
+                        COUNT(*) AS treatment_count,
+                        MAX(r2.reservation_datetime) AS latest_datetime
+                    FROM reservation r2
+                    WHERE r2.customer_name = r.customer_name
+                      AND r2.phone = r.phone
+                    GROUP BY
+                        CASE r2.treatment_id
+                            WHEN 1 THEN '리프팅'
+                            WHEN 2 THEN '토닝'
+                            WHEN 3 THEN '보톡스'
+                            WHEN 4 THEN '제모'
+                            ELSE '시술 미확인'
+                        END
+                    ORDER BY treatment_count DESC, latest_datetime DESC
+                )
+                WHERE ROWNUM = 1
+            ) AS favorite_treatment
+        FROM reservation r
         GROUP BY customer_name, phone
         ORDER BY
             CASE

@@ -12,6 +12,7 @@ public class AdminCustomerDetailDto {
     private int noShowCount;
     private boolean revisit;
     private String lastReservationDate;
+    private String favoriteTreatment;
     private List<AdminCustomerReservationDto> reservations;
 
     public String getCustomerKey() {
@@ -76,6 +77,14 @@ public class AdminCustomerDetailDto {
 
     public void setLastReservationDate(String lastReservationDate) {
         this.lastReservationDate = lastReservationDate;
+    }
+
+    public String getFavoriteTreatment() {
+        return favoriteTreatment;
+    }
+
+    public void setFavoriteTreatment(String favoriteTreatment) {
+        this.favoriteTreatment = favoriteTreatment;
     }
 
     public List<AdminCustomerReservationDto> getReservations() {

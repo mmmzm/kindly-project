@@ -10,6 +10,7 @@ public class AdminCustomerSummaryDto {
     private int noShowCount;
     private boolean revisit;
     private String lastReservationDate;
+    private String favoriteTreatment;
 
     public String getCustomerKey() {
         return customerKey;
@@ -73,5 +74,13 @@ public class AdminCustomerSummaryDto {
 
     public void setLastReservationDate(String lastReservationDate) {
         this.lastReservationDate = lastReservationDate;
+    }
+
+    public String getFavoriteTreatment() {
+        return favoriteTreatment;
+    }
+
+    public void setFavoriteTreatment(String favoriteTreatment) {
+        this.favoriteTreatment = favoriteTreatment;
     }
 }

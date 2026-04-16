@@ -368,8 +368,7 @@ function AdminCustomers() {
           <div className="admin-section-head">
             <h3>분석 차트 영역</h3>
             <p>
-              다음 단계에서 파이썬으로 노쇼율, 시간대 분포, 재방문율, 인기 시술
-              차트를 연결할 예정입니다.
+              
             </p>
           </div>
 

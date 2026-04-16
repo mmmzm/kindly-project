@@ -32,20 +32,20 @@ public class AdminCustomerService {
 
         List<AdminCustomerSummaryDto> customers = adminCustomerMapper.findCustomerSummaries();
 
+        String normalizedName = name.trim();
+        String normalizedPhone = phone.replace("-", "").trim();
+
         AdminCustomerSummaryDto matchedCustomer = customers.stream()
                 .filter(customer ->
-                        customer.getName().equals(name.trim()) &&
-                        customer.getPhone().equals(phone.replace("-", "").trim()))
+                        customer.getName().equals(normalizedName) &&
+                        customer.getPhone().equals(normalizedPhone))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 고객 정보를 찾을 수 없습니다."));
 
         matchedCustomer.setRevisit(matchedCustomer.getValidVisits() >= 2);
 
         List<AdminCustomerReservationDto> reservations =
-                adminCustomerMapper.findCustomerReservations(
-                        name.trim(),
-                        phone.replace("-", "").trim()
-                );
+                adminCustomerMapper.findCustomerReservations(normalizedName, normalizedPhone);
 
         AdminCustomerDetailDto detailDto = new AdminCustomerDetailDto();
         detailDto.setCustomerKey(matchedCustomer.getCustomerKey());
@@ -56,6 +56,7 @@ public class AdminCustomerService {
         detailDto.setNoShowCount(matchedCustomer.getNoShowCount());
         detailDto.setRevisit(matchedCustomer.isRevisit());
         detailDto.setLastReservationDate(matchedCustomer.getLastReservationDate());
+        detailDto.setFavoriteTreatment(matchedCustomer.getFavoriteTreatment());
         detailDto.setReservations(reservations);
 
         return detailDto;
