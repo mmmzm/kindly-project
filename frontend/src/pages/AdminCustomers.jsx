@@ -120,16 +120,18 @@ function AdminCustomers() {
     return revisit ? "재방문" : "첫 방문";
   };
 
-  const getStatusLabel = (status) => {
+  const getStatusLabel = (status, dateTime) => {
+    if (status === "RESERVED") {
+      const reservationTime = new Date(dateTime);
+      const now = new Date();
+      return reservationTime < now ? "방문완료" : "예약완료";
+    }
+
     switch (status) {
-      case "RESERVED":
-        return "예약완료";
       case "NOSHOW":
         return "노쇼";
       case "CANCELLED":
         return "취소";
-      case "DONE":
-        return "방문완료";
       default:
         return status || "-";
     }
@@ -140,6 +142,17 @@ function AdminCustomers() {
     return `${Math.round(
       (customer.noShowCount / customer.totalReservations) * 100
     )}%`;
+  };
+
+  const getNoShowRateNumber = (customer) => {
+    if (!customer?.totalReservations) return 0;
+    return Math.round(
+      (customer.noShowCount / customer.totalReservations) * 100
+    );
+  };
+
+  const isRiskCustomer = (customer) => {
+    return getNoShowRateNumber(customer) >= 30;
   };
 
   const revisitCustomerCount = customers.filter((c) => c.revisit).length;
@@ -224,7 +237,14 @@ function AdminCustomers() {
                         className={isSelected ? "selected" : ""}
                         onClick={() => handleSelectCustomer(customer)}
                       >
-                        <td>{customer.name}</td>
+                        <td>
+                          <span className="admin-customer-name-cell">
+                            <span>{customer.name}</span>
+                            {isRiskCustomer(customer) && (
+                              <span className="admin-risk-dot" />
+                            )}
+                          </span>
+                        </td>
                         <td>{formatPhone(customer.phone)}</td>
                         <td>
                           <span
@@ -288,13 +308,21 @@ function AdminCustomers() {
                     <strong>{selectedCustomer.name}</strong>
                   </div>
 
-                  <span
-                    className={`admin-customer-visit-badge ${
-                      selectedCustomer.revisit ? "revisit" : ""
-                    }`}
-                  >
-                    {getRevisitLabel(selectedCustomer.revisit)}
-                  </span>
+                  <div className="admin-customer-badge-group">
+                    {isRiskCustomer(selectedCustomer) && (
+                      <span className="admin-customer-risk-badge">
+                        노쇼 위험
+                      </span>
+                    )}
+
+                    <span
+                      className={`admin-customer-visit-badge ${
+                        selectedCustomer.revisit ? "revisit" : ""
+                      }`}
+                    >
+                      {getRevisitLabel(selectedCustomer.revisit)}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="admin-customer-profile-grid minimal">
@@ -336,7 +364,10 @@ function AdminCustomers() {
                               reservation.status === "NOSHOW" ? "noshow" : ""
                             }`}
                           >
-                            {getStatusLabel(reservation.status)}
+                            {getStatusLabel(
+                              reservation.status,
+                              reservation.dateTime
+                            )}
                           </span>
                         </div>
 
@@ -372,8 +403,8 @@ function AdminCustomers() {
           <div className="admin-section-head">
             <h3>분석 차트 영역</h3>
             <p>
-              노쇼율, 시간대별 분포,
-              재방문율, 인기 시술 TOP 데이터를 확인할 수 있습니다.
+              노쇼율, 시간대별 분포, 재방문율, 인기 시술 TOP 데이터를 확인할 수
+              있습니다.
             </p>
           </div>
 

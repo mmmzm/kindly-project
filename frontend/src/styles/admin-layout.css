@@ -1313,22 +1313,40 @@
   }
 }
 
-.admin-chart-insight {
-  margin: 0 0 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: #fff7f7;
-  border: 1px solid #f0d8d8;
-  color: #8f3a3a;
-  font-size: 0.88rem;
-  line-height: 1.6;
+.admin-customer-name-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.admin-chart-insight strong {
-  color: #7f2222;
-  font-weight: 800;
+.admin-risk-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef5350;
+  display: inline-block;
+  flex-shrink: 0;
 }
 
-.donut-chart-container {
-  min-height: 190px;
+.admin-customer-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+
+.admin-customer-risk-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #fff4f4;
+  color: #b43333;
+  border: 1px solid #f0d3d3;
+  font-size: 0.82rem;
+  font-weight: 700;
 }

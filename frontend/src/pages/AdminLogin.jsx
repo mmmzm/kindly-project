@@ -123,10 +123,10 @@ function AdminLogin() {
         </form>
 
         <div className="admin-login-footer">
-          <p>테스트 계정 예시</p>
+          <p></p>
           <div className="admin-login-example">
-            <span>superadmin / 1234</span>
-            <span>admin1 / 1234</span>
+            <span></span>
+            <span></span>
           </div>
         </div>
       </div>
