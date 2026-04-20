@@ -154,4 +154,22 @@
           AND status = 'RESERVED'
     </select>
 
+    <select id="findAllReservationReportRows" resultType="com.kindly.backend.dto.ReservationReportRowDto">
+        SELECT
+            r.reservation_id AS reservationId,
+            r.customer_name AS customerName,
+            r.phone AS phone,
+            t.treatment_name AS treatmentName,
+            TO_CHAR(r.reservation_datetime, 'YYYY-MM-DD HH24:MI') AS dateTime,
+            TO_CHAR(r.reservation_datetime, 'YYYY-MM-DD') AS reservationDate,
+            TO_CHAR(r.reservation_datetime, 'HH24:MI') AS reservationTime,
+            r.status AS status,
+            r.delay_status AS delayStatus,
+            r.delay_message AS delayMessage
+        FROM reservation r
+        JOIN treatment t
+          ON r.treatment_id = t.treatment_id
+        ORDER BY r.reservation_datetime DESC
+    </select>
+
 </mapper>

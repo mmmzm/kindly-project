@@ -2,6 +2,7 @@ package com.kindly.backend.mapper;
 
 import com.kindly.backend.dto.AdminCustomerReservationDto;
 import com.kindly.backend.dto.AdminCustomerSummaryDto;
+import com.kindly.backend.dto.CustomerReportRowDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,4 +17,6 @@ public interface AdminCustomerMapper {
             @Param("name") String name,
             @Param("phone") String phone
     );
+
+    List<CustomerReportRowDto> findCustomerReportRows();
 }

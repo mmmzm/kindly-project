@@ -1,6 +1,7 @@
 package com.kindly.backend.mapper;
 
 import com.kindly.backend.domain.Reservation;
+import com.kindly.backend.dto.ReservationReportRowDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -9,6 +10,8 @@ import java.util.List;
 
 @Mapper
 public interface ReservationMapper {
+
+    List<ReservationReportRowDto> findAllReservationReportRows();
 
     List<Reservation> findAll();
 

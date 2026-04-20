@@ -49,26 +49,15 @@
                 SELECT treatment_name
                 FROM (
                     SELECT
-                        CASE r2.treatment_id
-                            WHEN 1 THEN '리프팅'
-                            WHEN 2 THEN '토닝'
-                            WHEN 3 THEN '보톡스'
-                            WHEN 4 THEN '제모'
-                            ELSE '시술 미확인'
-                        END AS treatment_name,
+                        t2.treatment_name AS treatment_name,
                         COUNT(*) AS treatment_count,
                         MAX(r2.reservation_datetime) AS latest_datetime
                     FROM reservation r2
+                    JOIN treatment t2
+                      ON r2.treatment_id = t2.treatment_id
                     WHERE r2.customer_name = r.customer_name
                       AND r2.phone = r.phone
-                    GROUP BY
-                        CASE r2.treatment_id
-                            WHEN 1 THEN '리프팅'
-                            WHEN 2 THEN '토닝'
-                            WHEN 3 THEN '보톡스'
-                            WHEN 4 THEN '제모'
-                            ELSE '시술 미확인'
-                        END
+                    GROUP BY t2.treatment_name
                     ORDER BY treatment_count DESC, latest_datetime DESC
                 )
                 WHERE ROWNUM = 1
@@ -84,7 +73,8 @@
                         THEN 1
                         ELSE 0
                     END
-                ) >= 2 THEN 0
+                ) &gt;= 2
+                THEN 0
                 ELSE 1
             END,
             MAX(reservation_datetime) DESC
@@ -93,20 +83,100 @@
     <select id="findCustomerReservations" resultMap="customerReservationMap">
         SELECT
             r.reservation_id,
-            CASE r.treatment_id
-                WHEN 1 THEN '리프팅'
-                WHEN 2 THEN '토닝'
-                WHEN 3 THEN '보톡스'
-                WHEN 4 THEN '제모'
-                ELSE '시술 미확인'
-            END AS treatment_name,
+            t.treatment_name AS treatment_name,
             r.status,
             TO_CHAR(r.reservation_datetime, 'YYYY-MM-DD HH24:MI') AS date_time,
             r.delay_message
         FROM reservation r
+        JOIN treatment t
+          ON r.treatment_id = t.treatment_id
         WHERE r.customer_name = #{name}
           AND r.phone = #{phone}
         ORDER BY r.reservation_datetime DESC
+    </select>
+
+    <select id="findCustomerReportRows" resultType="com.kindly.backend.dto.CustomerReportRowDto">
+        SELECT
+            r.customer_name AS customerName,
+            r.phone AS phone,
+            COUNT(*) AS totalReservations,
+
+            SUM(
+                CASE
+                    WHEN r.reservation_datetime &lt; CURRENT_TIMESTAMP
+                     AND r.status NOT IN ('NOSHOW', 'CANCELLED')
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS validVisits,
+
+            SUM(
+                CASE
+                    WHEN r.status = 'NOSHOW'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS noShowCount,
+
+            ROUND(
+                CASE
+                    WHEN COUNT(*) = 0 THEN 0
+                    ELSE (
+                        SUM(CASE WHEN r.status = 'NOSHOW' THEN 1 ELSE 0 END) * 100.0
+                        / COUNT(*)
+                    )
+                END
+            , 1) AS noShowRate,
+
+            CASE
+                WHEN SUM(
+                    CASE
+                        WHEN r.reservation_datetime &lt; CURRENT_TIMESTAMP
+                         AND r.status NOT IN ('NOSHOW', 'CANCELLED')
+                        THEN 1
+                        ELSE 0
+                    END
+                ) &gt;= 2
+                THEN '재방문'
+                ELSE '첫 방문'
+            END AS revisitType,
+
+            TO_CHAR(MAX(r.reservation_datetime), 'YYYY-MM-DD HH24:MI') AS lastReservationDate,
+
+            (
+                SELECT treatmentName
+                FROM (
+                    SELECT
+                        t2.treatment_name AS treatmentName,
+                        COUNT(*) AS treatmentCount,
+                        MAX(r2.reservation_datetime) AS latestDatetime
+                    FROM reservation r2
+                    JOIN treatment t2
+                      ON r2.treatment_id = t2.treatment_id
+                    WHERE r2.customer_name = r.customer_name
+                      AND r2.phone = r.phone
+                    GROUP BY t2.treatment_name
+                    ORDER BY treatmentCount DESC, latestDatetime DESC
+                )
+                WHERE ROWNUM = 1
+            ) AS favoriteTreatment
+
+        FROM reservation r
+        GROUP BY r.customer_name, r.phone
+        ORDER BY
+            CASE
+                WHEN SUM(
+                    CASE
+                        WHEN r.reservation_datetime &lt; CURRENT_TIMESTAMP
+                         AND r.status NOT IN ('NOSHOW', 'CANCELLED')
+                        THEN 1
+                        ELSE 0
+                    END
+                ) &gt;= 2
+                THEN 0
+                ELSE 1
+            END,
+            MAX(r.reservation_datetime) DESC
     </select>
 
 </mapper>
